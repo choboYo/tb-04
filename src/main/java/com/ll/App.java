@@ -5,6 +5,7 @@ import java.util.Scanner;
 class App {
     void run() {
         System.out.println("== 명언 앱 ==");
+        int count = 0;
 
 
         while (true) {
@@ -23,7 +24,12 @@ class App {
                 System.out.print("명언 : ");
                 String WiseAnswer = scanner.nextLine();
 
-                System.out.printf("작가 : %s 명언 : %s\n", AthoreName, WiseAnswer);
+                if (WiseAnswer.length() != 0) {
+                    count++;
+                    int a = count;
+                }
+
+                System.out.printf("작가 : %s 명언 : %s\n %d번 명언이 등록되었습니다.\n", AthoreName, WiseAnswer, count);
             }
         }
     }
