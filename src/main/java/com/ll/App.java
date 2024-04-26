@@ -5,74 +5,92 @@ import java.util.List;
 import java.util.Scanner;
 
 class App {
-
     Scanner scanner;
-    int count = 0;
-    List<Plus> pluses;
-
+    int lastQuotationId;
+    List<Quotation> quotations;
 
     App() {
         scanner = new Scanner(System.in);
-        pluses = new ArrayList<>();
+        lastQuotationId = 0;
+        quotations = new ArrayList<>();
     }
 
     void run() {
         System.out.println("== 명언 앱 ==");
 
-        List<Plus> pluses = new ArrayList<>();
+
+        List<Quotation> quotations = new ArrayList<>();
 
         while (true) {
             System.out.println("명령) ");
-            String cmd = scanner.nextLine();
 
+            String cmd = scanner.nextLine();
 
             if (cmd.equals("종료")) {
                 break;
             } else if (cmd.equals("등록")) {
-                ActionWrite();
+                actionWrite();
+                System.out.printf("%d번 명언이 등록되었습니다.\n", lastQuotationId);
+
             } else if (cmd.equals("목록")) {
-                ActionList();
-
-            } else if (cmd.substring(0, 2).equals("삭제")) {
-                ActionDelete(cmd);
-
+                actionList();
+            } else if (cmd.startsWith("삭제?")) {
+                actionRemove(cmd);
             }
         }
     }
 
-
-    void ActionWrite() {
-        System.out.print("작가 : ");
-        String AthoreName = scanner.nextLine();
-
-
+    void actionWrite() {
         System.out.print("명언 : ");
-        String WiseAnswer = scanner.nextLine();
+        String content = scanner.nextLine();
 
-        count++;
+        System.out.print("작가 : ");
+        String authorName = scanner.nextLine();
 
-        Plus plus = new Plus(count, WiseAnswer, AthoreName);
-        pluses.add(plus);
+        lastQuotationId++;
 
-        System.out.printf("작가 : %s 명언 : %s\n %d번 명언이 등록되었습니다.\n", AthoreName, WiseAnswer, count);
+        int id = lastQuotationId;
+
+        Quotation quotation = new Quotation(id, content, authorName);
+        quotations.add(quotation);
     }
 
-    void ActionList() {
-        System.out.println("번호 / 작가 / 명언 ");
-        System.out.println("-------------------");
+    void actionList() {
+        System.out.println("번호 / 작가 / 명언");
 
-        for (int i = pluses.size() - 1; i >= 0; i--) {
-            Plus plus = pluses.get(i);
-            System.out.printf("%d   %s    %s\n", plus.id, plus.authorName, plus.content);
+        System.out.println("----------------------");
 
+        if (quotations.isEmpty()) System.out.println("등록된 명언이 없습니다.");
 
+        for (int i = quotations.size() - 1; i >= 0; i--) {
+            Quotation quotation = quotations.get(i);
+            System.out.printf("%d / %s / %s\n", quotation.id, quotation.authorName, quotation.content);
         }
-    }
+    } //"1"
 
-    void ActionDelete(String cmd) {
-        int IdSearch = cmd.indexOf("=");
-        int id = Integer.valueOf(cmd.substring(IdSearch + 1));
-        pluses.remove(id - 1);
-    }
+    void actionRemove(String cmd) {
+        String[] cmdBits = cmd.split("\\?", 2);
+        String action = cmdBits[0];
+        String queryString = cmdBits[1];
 
+        String[] queryStringBits = queryString.split("&");
+        //queryStringBits[0] id=1
+        //queryStringBits[1] archive=true
+
+        int id = 0;
+        for (int i = 0; i < queryStringBits.length; i++) {
+            String queryParamStr = queryStringBits[i];
+
+            String[] queryParamStrBits = queryParamStr.split("=", 2);
+
+            String paramName = queryParamStrBits[0];
+            String paramValue = queryParamStrBits[1];
+
+            if (paramName.equals("id")) {
+                id = Integer.parseInt(paramValue);
+            }
+        }
+
+        System.out.printf("%d번 명언을 삭제합니다\n", id);
+    }
 }
