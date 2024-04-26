@@ -36,6 +36,8 @@ class App {
                 actionList();
             } else if (cmd.startsWith("삭제?")) {
                 actionRemove(cmd);
+            } else if (cmd.startsWith("수정?")) {
+                actionModify(cmd);
             }
         }
     }
@@ -69,13 +71,30 @@ class App {
     } //"1"
 
     void actionRemove(String cmd) {
+        int id = getParamAsint(cmd, "id", 0);
+        if (id == 0) {
+            System.out.println("id를 정확히 입력해주세요.");
+            return; //함수를 끝낸다.
+        }
+
+        System.out.printf("%d번 명언을 삭제합니다\n", id);
+    }
+
+    void actionModify(String cmd) {
+        int id = getParamAsint(cmd, "id", 0);
+        if (id == 0) {
+            System.out.println("id를 정확히 입력해주세요.");
+            return; //함수를 끝낸다.
+        }
+
+        System.out.printf("%d번 명언을 수정합니다\n", id);
+    }
+
+    int getParamAsint(String cmd, String paramName, int defaultValue) {
         String[] cmdBits = cmd.split("\\?", 2);
-        String action = cmdBits[0];
         String queryString = cmdBits[1];
 
         String[] queryStringBits = queryString.split("&");
-        //queryStringBits[0] id=1
-        //queryStringBits[1] archive=true
 
         int id = 0;
         for (int i = 0; i < queryStringBits.length; i++) {
@@ -83,14 +102,19 @@ class App {
 
             String[] queryParamStrBits = queryParamStr.split("=", 2);
 
-            String paramName = queryParamStrBits[0];
+            String _paramName = queryParamStrBits[0];
             String paramValue = queryParamStrBits[1];
 
-            if (paramName.equals("id")) {
-                id = Integer.parseInt(paramValue);
+            if (_paramName.equals(paramName)) {
+                try {
+                    // 문제가 없을 경우
+                    return Integer.parseInt(paramValue);
+                } catch (NumberFormatException e) {
+                    // 문제가 생긴경우
+                    return defaultValue;
+                }
             }
         }
-
-        System.out.printf("%d번 명언을 삭제합니다\n", id);
+        return defaultValue;
     }
 }
