@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class App {
-  private   Scanner scanner;
-  private  int lastQuotationId;
-  private  List<Quotation> quotations;
+    private Scanner scanner;
+    private int lastQuotationId;
+    private List<Quotation> quotations;
 
     public App() {
         scanner = new Scanner(System.in);
@@ -40,6 +40,10 @@ public class App {
                 case "수정":
                     actionModify(rq);
                     break;
+                case "테스트":
+                    autoTestMaker();
+                    break;
+
             }
         }
     }
@@ -76,24 +80,39 @@ public class App {
 
     private void actionRemove(Rq rq) {
         int id = rq.getParamAsInt("id", 0);
-        if(id == 0){
+        if (id == 0) {
             System.out.println("id를 정확히 입력해주세요.");
             return; //함수를 끝낸다.
         }
         int index = indexOfNumber(id);
 
-         if (index == -1) {
-             System.out.printf("%d번 명언은 존재하지 않습니다.\n", id);
-             return;
+        if (index == -1) {
+            System.out.printf("%d번 명언은 존재하지 않습니다.\n", id);
+            return;
         } else if (index != -1) {
-             quotations.remove(index);
-         }
+            quotations.remove(index);
+        }
 
 
         System.out.printf("%d번 명언을 삭제합니다.\n", id);
     }
 
-    private int indexOfNumber (int id) {
+    private void autoTestMaker() {
+
+
+        for (int i = 1; i < 4; i++) {
+                int id = i;
+            String content = "명언" + id;
+            String authorName = "작가" + id;
+
+            Quotation quotation = new Quotation(id, content, authorName);
+            quotations.add(quotation);
+        }
+
+
+    }
+
+    private int indexOfNumber(int id) {
         for (int i = 0; i < quotations.size(); i++) {
             Quotation quotation = quotations.get(i);
             // list 안에있는 id를 비교하여 매개변수 id와 일치하면 i
@@ -106,11 +125,9 @@ public class App {
     }
 
 
-
-
     private void actionModify(Rq rq) {
         int id = rq.getParamAsInt("id", 0);
-        if(id == 0){
+        if (id == 0) {
             System.out.println("id를 정확히 입력해주세요.");
             return; //함수를 끝낸다.
         }
@@ -136,7 +153,10 @@ public class App {
         System.out.printf("%d번 명언이 수정되었습니다.\n", id);
 
 
-
     }
 
+
 }
+
+
+
